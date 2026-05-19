@@ -1,1 +1,3 @@
-# kita-konbini-minimart-management-system
+# Kita Konbini Minimart Management System
+
+Prototype system for DES3073 project.

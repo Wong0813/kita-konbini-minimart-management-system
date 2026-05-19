@@ -1,0 +1,1 @@
+# kita-konbini-minimart-management-system

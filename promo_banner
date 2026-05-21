@@ -1,0 +1,177 @@
+<!-- resources/views/dashboard.blade.php -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Minimart Dashboard</title>
+
+    <style>
+        body{
+            margin:0;
+            font-family:Arial, sans-serif;
+            background:#f4f4f4;
+        }
+
+        .navbar{
+            background:#28a745;
+            color:white;
+            padding:15px;
+            font-size:22px;
+            font-weight:bold;
+        }
+
+        .container{
+            width:90%;
+            margin:auto;
+            margin-top:20px;
+        }
+
+        .welcome-box{
+            background:white;
+            padding:20px;
+            border-radius:10px;
+            box-shadow:0 0 10px rgba(0,0,0,0.1);
+            margin-bottom:20px;
+        }
+
+        .banner{
+            position:relative;
+            height:300px;
+            border-radius:15px;
+            overflow:hidden;
+            margin-bottom:25px;
+            box-shadow:0 0 10px rgba(0,0,0,0.2);
+        }
+
+        .banner img{
+            width:100%;
+            height:100%;
+            object-fit:cover;
+        }
+
+        .banner-text{
+            position:absolute;
+            top:50%;
+            left:50px;
+            transform:translateY(-50%);
+            color:white;
+            background:rgba(0,0,0,0.5);
+            padding:20px;
+            border-radius:10px;
+        }
+
+        .banner-text h1{
+            margin:0;
+            font-size:40px;
+        }
+
+        .banner-text p{
+            font-size:18px;
+        }
+
+        .promo-grid{
+            display:grid;
+            grid-template-columns:repeat(auto-fit, minmax(250px,1fr));
+            gap:20px;
+        }
+
+        .promo-card{
+            background:white;
+            border-radius:12px;
+            overflow:hidden;
+            box-shadow:0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .promo-card img{
+            width:100%;
+            height:180px;
+            object-fit:cover;
+        }
+
+        .promo-content{
+            padding:15px;
+        }
+
+        .promo-content h3{
+            margin-top:0;
+        }
+
+        .promo-btn{
+            display:inline-block;
+            margin-top:10px;
+            background:#28a745;
+            color:white;
+            padding:10px 15px;
+            border-radius:5px;
+            text-decoration:none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="navbar">
+        Minimart Management System
+    </div>
+
+    <div class="container">
+
+        <div class="welcome-box">
+            <h2>Welcome to Minimart Dashboard</h2>
+            <p>Manage products, promotions, customers, and sales easily.</p>
+        </div>
+
+        <!-- Main Promotion Banner -->
+        <div class="banner">
+
+            <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1200" alt="Promotion Banner">
+
+            <div class="banner-text">
+                <h1>MEGA SALE 50% OFF</h1>
+                <p>Get discounts on snacks, drinks, and daily essentials!</p>
+            </div>
+
+        </div>
+
+        <!-- Promotion Cards -->
+        <div class="promo-grid">
+
+            <div class="promo-card">
+                <img src="https://images.unsplash.com/photo-1586201375761-83865001e31c?q=80&w=1200">
+
+                <div class="promo-content">
+                    <h3>Weekend Promotion</h3>
+                    <p>Buy 2 drinks and get 1 free this weekend only.</p>
+
+                    <a href="#" class="promo-btn">View Promotion</a>
+                </div>
+            </div>
+
+            <div class="promo-card">
+                <img src="https://images.unsplash.com/photo-1573246123716-6b1782bfc499?q=80&w=1200">
+
+                <div class="promo-content">
+                    <h3>Fresh Fruits Sale</h3>
+                    <p>Enjoy fresh fruits with discounts up to 30%.</p>
+
+                    <a href="#" class="promo-btn">Shop Now</a>
+                </div>
+            </div>
+
+            <div class="promo-card">
+                <img src="https://images.unsplash.com/photo-1604719312566-8912e9227c6a?q=80&w=1200">
+
+                <div class="promo-content">
+                    <h3>Member Rewards</h3>
+                    <p>Create an account and earn reward points every purchase.</p>
+
+                    <a href="#" class="promo-btn">Join Now</a>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

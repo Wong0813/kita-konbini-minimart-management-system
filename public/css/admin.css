@@ -1,0 +1,414 @@
+/* ============================================
+   KITA KONBINI - Admin Panel Stylesheet
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Nunito', sans-serif;
+    background: #F5F5F5;
+    color: #1A1A1A;
+}
+
+/* ============================================
+   LAYOUT
+   ============================================ */
+
+.admin-wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* ============================================
+   SIDEBAR
+   ============================================ */
+
+.admin-sidebar {
+    width: 240px;
+    background: #1A1A1A;
+    color: white;
+    flex-shrink: 0;
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.admin-sidebar-brand {
+    padding: 24px 20px;
+    border-bottom: 1px solid #333;
+}
+
+.admin-sidebar-brand h2 {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 22px;
+    color: #B30000;
+}
+
+.admin-sidebar-brand p {
+    font-size: 11px;
+    color: #888;
+    margin-top: 2px;
+}
+
+.admin-nav { padding: 16px 0; }
+
+.admin-nav a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    color: #ccc;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.admin-nav a:hover,
+.admin-nav a.active {
+    background: #B30000;
+    color: white;
+}
+
+.admin-nav .nav-section {
+    padding: 12px 20px 4px;
+    font-size: 10px;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.admin-nav-logout {
+    width: 100%;
+    text-align: left;
+    padding: 12px 20px;
+    background: none;
+    border: none;
+    color: #ccc;
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.admin-nav-logout:hover {
+    background: #B30000;
+    color: white;
+}
+
+/* ============================================
+   MAIN CONTENT
+   ============================================ */
+
+.admin-main {
+    margin-left: 240px;
+    flex: 1;
+    background: #F5F5F5;
+    min-height: 100vh;
+}
+
+.admin-topbar {
+    background: white;
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+
+.admin-topbar h1 {
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.admin-topbar-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.admin-content { padding: 24px; }
+
+/* ============================================
+   CARDS
+   ============================================ */
+
+.admin-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    margin-bottom: 20px;
+}
+
+.admin-card-title {
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 16px;
+    color: #1A1A1A;
+}
+
+/* ============================================
+   STAT CARDS
+   ============================================ */
+
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.stat-card .stat-icon {
+    font-size: 32px;
+    margin-bottom: 12px;
+}
+
+.stat-card .stat-label {
+    font-size: 12px;
+    color: #888;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.stat-card .stat-value {
+    font-size: 28px;
+    font-weight: 800;
+    color: #1A1A1A;
+}
+
+.stat-card .stat-sub {
+    font-size: 12px;
+    color: #888;
+    margin-top: 4px;
+}
+
+/* ============================================
+   BUTTONS
+   ============================================ */
+
+.admin-btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: opacity 0.2s, transform 0.1s;
+}
+
+.admin-btn:hover {
+    opacity: 0.85;
+    transform: translateY(-1px);
+}
+
+.admin-btn-primary { background: #B30000; color: white; }
+.admin-btn-danger  { background: #EF4444; color: white; }
+.admin-btn-warning { background: #F59E0B; color: white; }
+.admin-btn-success { background: #10B981; color: white; }
+.admin-btn-gray    { background: #E0E0E0; color: #1A1A1A; }
+.admin-btn-sm      { padding: 6px 12px; font-size: 12px; }
+
+/* ============================================
+   TABLE
+   ============================================ */
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admin-table th {
+    text-align: left;
+    padding: 12px 16px;
+    font-size: 12px;
+    color: #888;
+    font-weight: 700;
+    text-transform: uppercase;
+    border-bottom: 2px solid #F5F5F5;
+    background: #FAFAFA;
+}
+
+.admin-table td {
+    padding: 14px 16px;
+    font-size: 14px;
+    border-bottom: 1px solid #F5F5F5;
+    vertical-align: middle;
+}
+
+.admin-table tr:hover td { background: #FAFAFA; }
+
+/* ============================================
+   BADGES
+   ============================================ */
+
+.badge {
+    padding: 4px 10px;
+    border-radius: 50px;
+    font-size: 11px;
+    font-weight: 700;
+    display: inline-block;
+}
+
+.badge-red    { background: #FEE2E2; color: #991B1B; }
+.badge-green  { background: #D1FAE5; color: #065F46; }
+.badge-orange { background: #FEF3C7; color: #92400E; }
+.badge-blue   { background: #DBEAFE; color: #1E40AF; }
+.badge-gray   { background: #F3F4F6; color: #6B7280; }
+
+/* ============================================
+   FORMS
+   ============================================ */
+
+.admin-form-group { margin-bottom: 16px; }
+
+.admin-form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: #1A1A1A;
+}
+
+.admin-form-group input,
+.admin-form-group select,
+.admin-form-group textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid #E0E0E0;
+    border-radius: 8px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+    background: white;
+}
+
+.admin-form-group input:focus,
+.admin-form-group select:focus,
+.admin-form-group textarea:focus {
+    border-color: #B30000;
+    box-shadow: 0 0 0 3px rgba(179,0,0,0.08);
+}
+
+.form-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.form-grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+}
+
+/* ============================================
+   ALERTS
+   ============================================ */
+
+.alert-admin {
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.alert-admin-success { background: #D1FAE5; color: #065F46; border: 1px solid #A7F3D0; }
+.alert-admin-danger  { background: #FEE2E2; color: #991B1B; border: 1px solid #FECACA; }
+.alert-admin-warning { background: #FEF3C7; color: #92400E; border: 1px solid #FDE68A; }
+
+/* ============================================
+   INVENTORY
+   ============================================ */
+
+.stock-input {
+    width: 70px;
+    padding: 6px 10px;
+    border: 1.5px solid #E0E0E0;
+    border-radius: 6px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
+    outline: none;
+}
+
+.stock-input:focus { border-color: #B30000; }
+
+/* ============================================
+   REVENUE
+   ============================================ */
+
+.revenue-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.month-bar-wrapper {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    height: 120px;
+    padding: 0 4px;
+}
+
+.month-bar {
+    flex: 1;
+    background: #B30000;
+    border-radius: 4px 4px 0 0;
+    min-height: 4px;
+    transition: opacity 0.2s;
+    cursor: pointer;
+    position: relative;
+}
+
+.month-bar:hover { opacity: 0.8; }
+
+.month-bar-label {
+    font-size: 10px;
+    color: #888;
+    text-align: center;
+    margin-top: 4px;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 1024px) {
+    .stat-grid { grid-template-columns: repeat(2, 1fr); }
+    .revenue-grid { grid-template-columns: repeat(2, 1fr); }
+    .form-grid-3 { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 768px) {
+    .admin-sidebar { display: none; }
+    .admin-main { margin-left: 0; }
+    .stat-grid { grid-template-columns: repeat(2, 1fr); }
+    .form-grid-2 { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,229 @@
+================================================================
+        KITA KONBINI MINIMART - PROJECT SETUP GUIDE
+================================================================
+
+Tech Stack:
+  - Framework  : Laravel (PHP)
+  - Frontend   : Blade Templates + Vanilla CSS/JS
+  - Database   : MySQL (via Laragon)
+  - Local Server: Laragon (port 8001)
+  - Storage    : Laravel Storage (local disk)
+
+
+================================================================
+1. REQUIREMENTS
+================================================================
+
+Make sure you have these installed:
+  - Laragon (includes PHP 8.x, MySQL, Apache)
+  - Composer
+  - Node.js & npm
+  - Git
+
+
+================================================================
+2. SETUP AFTER CLONING
+================================================================
+
+Step 1 - Install dependencies
+------------------------------
+  composer install
+  npm install && npm run dev
+
+
+Step 2 - Setup environment file
+---------------------------------
+  1. Copy .env.example to .env
+       copy .env.example .env
+
+  2. Generate app key
+       php artisan key:generate
+
+  3. Edit .env - update database settings:
+       DB_DATABASE=kita_konbini
+       DB_USERNAME=root
+       DB_PASSWORD=
+
+
+Step 3 - Setup database
+--------------------------
+  1. Create database named "kita_konbini" in phpMyAdmin or HeidiSQL
+  2. Run migrations and seed default data:
+       php artisan migrate --seed
+
+
+Step 4 - Storage link
+-----------------------
+  php artisan storage:link
+
+  (This links the storage folder so product images load properly)
+
+
+Step 5 - Add product images  *** IMPORTANT ***
+------------------------------------------------
+  Images are NOT included in the repo. Add them manually:
+
+  Product images --> storage\app\public\products\
+  Store images   --> public\images\store\
+
+  Store images needed:
+    - storefront.jpg
+    - shelves1.jpg
+    - shelves2.jpg
+    - shelves3.jpg
+    - shelves4.jpg
+
+  Product images needed:
+    - 100plus.jpg       - oishi.jpg         - milo.jpg
+    - tehbotol.jpg      - mineralwater.jpg  - pokka.jpg
+    - corntoz.jpg       - cadbury.jpg       - rollercoaster.jpg
+    - lays.jpg          - oreo.jpg          - kitkat.jpg
+    - samyang.jpg       - maggi.jpg         - indomie.jpg
+    - cupnoodles.jpg    - stapler.jpg       - paperclip.jpg
+    - tape.jpg          - pen.jpg           - a4paper.jpg
+    - pencil.jpg
+
+
+Step 6 - Assign images to products
+-------------------------------------
+  in CMD Run tinker:
+    php artisan tinker
+
+  Then paste this and press Enter:
+
+    $images = [
+        '100 Plus Can Drink'           => 'products/100plus.jpg',
+        'Oishi Green Tea Honey Lemon'  => 'products/oishi.jpg',
+        'Milo Can 240ml'               => 'products/milo.jpg',
+        'Teh Botol Sosro'              => 'products/tehbotol.jpg',
+        'Mineral Water 500ml'          => 'products/mineralwater.jpg',
+        'Pokka Green Tea'              => 'products/pokka.jpg',
+        'Corntoz Chilli Cheez'         => 'products/corntoz.jpg',
+        'Cadbury Dairy Milk Choc 160g' => 'products/cadbury.jpg',
+        'Roller Coaster Cheese'        => 'products/rollercoaster.jpg',
+        "Lay's Classic Chips"          => 'products/lays.jpg',
+        'Oreo Original'                => 'products/oreo.jpg',
+        'KitKat 2 Fingers'             => 'products/kitkat.jpg',
+        'Samyang Buldak Spicy Ramen'   => 'products/samyang.jpg',
+        'Maggi Kari 5-pack'            => 'products/maggi.jpg',
+        'Indomie Goreng'               => 'products/indomie.jpg',
+        'Cup Noodles Seafood'          => 'products/cupnoodles.jpg',
+        'Small Stapler'                => 'products/stapler.jpg',
+        'Paper Clip Binder'            => 'products/paperclip.jpg',
+        'Adhesive Tape Transparent'    => 'products/tape.jpg',
+        'Pen Blue (box of 10)'         => 'products/pen.jpg',
+        'A4 Paper 80gsm (100 sheets)'  => 'products/a4paper.jpg',
+        'Pencil 2B (12 pcs)'           => 'products/pencil.jpg',
+    ];
+    foreach ($images as $name => $path) {
+        App\Models\Product::where('name', $name)->update(['image' => $path]);
+    }
+
+
+Step 7 - Start server
+-----------------------
+  Start Laragon, then open browser:
+    http://127.0.0.1:8001
+
+
+================================================================
+3. DEFAULT LOGIN CREDENTIALS
+================================================================
+
+  Admin:
+    Email    : admin@kitakonbini.com
+    Password : admin123
+
+  Demo User:
+    Email    : demo@student.edu.my
+    Password : password
+
+  Admin panel URL: http://127.0.0.1:8001/admin
+
+
+================================================================
+4. FEATURES
+================================================================
+
+Customer Side:
+  - Register & Login (Matric ID + Email)
+  - Browse products by category
+  - Search products
+  - Product detail page
+  - Shopping cart (add, update qty, remove, checkout)
+  - Wishlist
+  - Shelf locator - find product by shelf code
+  - Profile page (view & update)
+
+Admin Panel (/admin):
+  - Dashboard - stats, alerts, monthly sales chart
+  - Product management (create, edit, delete, image upload)
+  - Category management
+  - User management
+  - Inventory manager:
+      * Low stock alert (3 units or below)
+      * Expired & expiring soon alerts (within 7 days)
+      * Batch tracking - restock with expiry date per batch
+      * Auto stock update when batch is added
+  - Shelf management - assign & clear shelf slots
+  - Revenue report
+
+
+================================================================
+5. IMPORTANT FOLDER STRUCTURE
+================================================================
+
+  app/Models/                        --> Product, Category, Order,
+                                         ProductBatch, User
+  app/Http/Controllers/Admin/        --> Admin controllers
+  database/migrations/               --> All table schemas
+  database/seeders/DatabaseSeeder.php--> Default seed data
+  resources/views/admin/             --> Admin blade views
+  resources/views/                   --> Customer blade views
+  routes/web.php                     --> All routes
+  storage/app/public/products/       --> Product images (add manually)
+  public/images/store/               --> Store images (add manually)
+
+
+================================================================
+6. COMMON ISSUES & FIXES
+================================================================
+
+Images not showing:
+  --> Run: php artisan storage:link
+  --> Check image filenames match exactly (case-sensitive)
+
+500 Server Error:
+  --> Run: php artisan config:clear
+  --> Run: php artisan cache:clear
+  --> Check .env file exists and APP_KEY is filled
+
+Database error / table not found:
+  --> Run: php artisan migrate
+  --> If still error: php artisan migrate:fresh --seed
+      WARNING: migrate:fresh will DELETE all existing data!
+
+Class not found after adding new Model:
+  --> Run: composer dump-autoload
+
+
+================================================================
+7. IMPORTANT NOTES
+================================================================
+
+  [!] NEVER run migrate:fresh --seed on a shared/production
+      database - it will delete all data.
+
+  [!] The .env file is NOT in the repo. Each teammate must
+      create their own from .env.example.
+
+  [!] Product images must be copied manually to
+      storage/app/public/products/ after cloning.
+
+  [*] After any new migration file is added by a teammate,
+      run: php artisan migrate (NOT migrate:fresh)
+
+  [*] Admin route is protected - only users with
+      is_admin = true in the database can access /admin.
+
+================================================================

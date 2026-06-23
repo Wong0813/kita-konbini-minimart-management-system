@@ -2,17 +2,29 @@
 
 @extends('layouts.app')
 
-@section('title', 'All Products - Kita Konbini')
+@section('title', 'Home - Kita Konbini Minimart')
 
 @section('content')
 
-<section class="hero">
-    <div class="hero-content">
-        <h1>All <span>Products</span></h1>
-        <p>Browse our full range of snacks, beverages, instant food & stationery.</p>
+{{-- Hero --}}
+<section class="hero" style="position:relative; overflow:hidden; min-height:320px; display:flex; align-items:center; justify-content:center;">
+    {{-- Storefront background --}}
+    <div style="position:absolute; inset:0;
+        background:url('{{ asset('images/store/storefront.jpg') }}') center/cover no-repeat;
+        opacity:0.55;">
+    </div>
+    {{-- Gradient overlay --}}
+    <div style="position:absolute; inset:0;
+        background:linear-gradient(135deg, rgba(192,57,43,0.75) 0%, rgba(123,36,28,0.85) 100%);">
+    </div>
+    {{-- Content --}}
+    <div class="hero-content" style="position:relative; z-index:1;">
+        <h1>Welcome to <span>Kita Konbini</span></h1>
+        <p>Your one-stop minimart for snacks, beverages, instant food & stationery.</p>
+        <a href="{{ route('products.index') }}" class="btn-primary" style="display:inline-block; width:auto; padding:14px 40px;">Shop Now</a>
     </div>
 </section>
-
+{{-- Categories --}}
 <section class="section">
     <h2 class="section-title">Categories</h2>
     <div class="categories-grid">
@@ -25,15 +37,15 @@
     </div>
 </section>
 
+{{-- Featured Products --}}
 <section class="section">
-    <h2 class="section-title">All Products</h2>
+    <h2 class="section-title">Featured Products</h2>
     <div class="products-grid">
-        @forelse($products as $product)
+        @foreach($recommended as $product)
         <div class="product-card" style="position:relative;">
 
             <button onclick="toggleWishlist({{ $product->id }}, this)"
-                style="position:absolute; top:10px; right:10px; background:none; border:none;
-                font-size:20px; cursor:pointer; color:var(--gray-text); z-index:10;">
+                style="position:absolute; top:10px; right:10px; background:none; border:none; font-size:20px; cursor:pointer; color:var(--gray-text); z-index:10;">
                 ♡
             </button>
 
@@ -59,9 +71,16 @@
                 </div>
             </div>
         </div>
-        @empty
-            <p>No products found.</p>
-        @endforelse
+        @endforeach
+    </div>
+</section>
+
+{{-- Shelf Locator CTA --}}
+<section class="section shelf-cta">
+    <div class="shelf-cta-content">
+        <h2>Can't find what you're looking for?</h2>
+        <p>Use our shelf locator to find products by shelf code.</p>
+        <a href="{{ route('shelf.index') }}" class="btn-primary">Find on Shelf</a>
     </div>
 </section>
 

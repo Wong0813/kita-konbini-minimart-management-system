@@ -16,6 +16,7 @@ class Product extends Model
         'category_id',
         'shelf_code',
         'stock',
+        'units_per_carton',
         'is_featured',
         'image',
         'description',
@@ -23,20 +24,16 @@ class Product extends Model
     ];
 
     protected $casts = [
-        'price'       => 'decimal:2',
-        'cost_price'  => 'decimal:2',
-        'is_featured' => 'boolean',
-        'expiry_date' => 'date',
+        'price'            => 'decimal:2',
+        'cost_price'       => 'decimal:2',
+        'is_featured'      => 'boolean',
+        'expiry_date'      => 'date',
+        'units_per_carton' => 'integer',
     ];
 
     public function category()
     {
         return $this->belongsTo(Category::class);
-    }
-
-    public function batches()
-    {
-        return $this->hasMany(ProductBatch::class)->orderBy('expiry_date');
     }
 
     public function getPriceFormattedAttribute(): string

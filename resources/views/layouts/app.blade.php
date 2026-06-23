@@ -10,8 +10,33 @@
 </head>
 <body>
 
+    {{-- Admin Bar (only visible to admins) --}}
+    @auth
+        @if(auth()->user()->is_admin)
+        <div style="background:#1a1a1a; color:#fff; padding:8px 24px;
+                    display:flex; align-items:center; justify-content:space-between;
+                    font-size:13px; font-family:'Nunito',sans-serif;
+                    position:sticky; top:0; z-index:200;">
+            <span style="display:flex; align-items:center; gap:8px;">
+                <span style="background:#C0392B; color:#fff; font-size:11px; font-weight:800;
+                              padding:2px 8px; border-radius:4px; letter-spacing:0.5px;">ADMIN</span>
+                You are viewing the store as an admin.
+            </span>
+            <a href="{{ route('admin.dashboard') }}"
+               style="display:inline-flex; align-items:center; gap:6px;
+                      background:#C0392B; color:#fff; padding:6px 14px;
+                      border-radius:6px; font-size:12px; font-weight:800;
+                      text-decoration:none; transition:background 0.2s;"
+               onmouseover="this.style.background='#a93226';"
+               onmouseout="this.style.background='#C0392B';">
+                ⚙️ Back to Admin Panel
+            </a>
+        </div>
+        @endif
+    @endauth
+
     {{-- Navbar --}}
-    <nav class="navbar">
+    <nav class="navbar" @auth @if(auth()->user()->is_admin) style="top:37px;" @endif @endauth>
         <a href="{{ route('home') }}" class="navbar-brand">
             <span>Kita Konbini</span>
             MINIMART
@@ -156,12 +181,10 @@
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // Page fade in
         document.body.style.opacity = '0';
         document.body.style.transition = 'opacity 0.4s ease';
         setTimeout(() => document.body.style.opacity = '1', 50);
 
-        // Animate cards on scroll
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -178,7 +201,6 @@
             observer.observe(el);
         });
 
-        // Add to cart
         document.querySelectorAll('.add-btn').forEach(btn => {
             btn.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -228,7 +250,6 @@
         });
     });
 
-    // Wishlist toggle
     function toggleWishlist(id, btn) {
         fetch('/wishlist/toggle/' + id, {
             method: 'POST',
@@ -246,7 +267,6 @@
         });
     }
 
-    // Combo popup
     function showComboPopup(productId) {
         const existing = document.getElementById('combo-popup');
         if (existing) existing.remove();

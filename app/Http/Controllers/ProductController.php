@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Category;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -31,8 +32,8 @@ class ProductController extends Controller
     // Show single product
     public function show($id)
     {
-        $product  = Product::with('category')->findOrFail($id);
-        $related  = Product::where('category_id', $product->category_id)
+        $product = Product::with('category')->findOrFail($id);
+        $related = Product::where('category_id', $product->category_id)
             ->where('id', '!=', $id)
             ->take(4)
             ->get();
@@ -64,10 +65,10 @@ class ProductController extends Controller
 
         if (in_array($id, $wishlist)) {
             $wishlist = array_diff($wishlist, [$id]);
-            $status = 'removed';
+            $status   = 'removed';
         } else {
             $wishlist[] = $id;
-            $status = 'added';
+            $status     = 'added';
         }
 
         session(['wishlist' => array_values($wishlist)]);
@@ -79,28 +80,47 @@ class ProductController extends Controller
         ]);
     }
 
+    // Combo suggestion
     public function combo($id)
-{
-    $product = Product::with('category')->findOrFail($id);
+    {
+        $product = Product::with('category')->findOrFail($id);
 
-    // Find a product from a different category as combo suggestion
-    $combo = Product::where('category_id', '!=', $product->category_id)
-        ->where('stock', '>', 0)
-        ->where('id', '!=', $id)
-        ->inRandomOrder()
-        ->first();
+        $combo = Product::where('category_id', '!=', $product->category_id)
+            ->where('stock', '>', 0)
+            ->where('id', '!=', $id)
+            ->inRandomOrder()
+            ->first();
 
-    if (!$combo) {
-        return response()->json(['combo' => null]);
+        if (!$combo) {
+            return response()->json(['combo' => null]);
+        }
+
+        return response()->json([
+            'combo' => [
+                'id'       => $combo->id,
+                'name'     => $combo->name,
+                'category' => $combo->category->name,
+                'price'    => $combo->price_formatted,
+                'image'    => $combo->image ? Storage::url($combo->image) : null,
+            ]
+        ]);
     }
 
-    return response()->json([
-        'combo' => [
-            'id'       => $combo->id,
-            'name'     => $combo->name,
-            'category' => $combo->category->name,
-            'price'    => $combo->price_formatted,
-        ]
-    ]);
-}
-}
+    // Catalogue for cart page
+    public function catalogue()
+    {
+        $products = Product::with('category')
+            ->where('stock', '>', 0)
+            ->get()
+            ->map(function ($p) {
+                return [
+                    'id'    => $p->id,
+                    'name'  => $p->name,
+                    'price' => number_format($p->price, 2),
+                    'image' => $p->image ? Storage::url($p->image) : null,
+                ];
+            });
+
+        return response()->json($products);
+    }
+}   

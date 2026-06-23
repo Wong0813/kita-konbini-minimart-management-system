@@ -12,44 +12,52 @@ class AdminController extends Controller
 {
     public function dashboard()
     {
-        $totalProducts  = Product::count();
-        $totalCategories = Category::count();
-        $totalUsers     = User::where('is_admin', false)->count();
-        $totalOrders    = Order::count();
-        $totalRevenue   = Order::sum('total');
-        $lowStock       = Product::where('stock', '<=', 3)->count();
-        $expiringSoon   = Product::whereNotNull('expiry_date')
-                            ->whereDate('expiry_date', '<=', now()->addDays(7))
-                            ->whereDate('expiry_date', '>=', now())
-                            ->count();
-        $expired        = Product::whereNotNull('expiry_date')
-                            ->whereDate('expiry_date', '<', now())
-                            ->count();
-        $recentOrders   = Order::with('user')->latest()->take(5)->get();
-        $monthlySales   = Order::selectRaw('MONTH(created_at) as month, SUM(total) as total')
-                            ->whereYear('created_at', now()->year)
-                            ->groupBy('month')
-                            ->orderBy('month')
-                            ->get();
+        $totalProducts    = Product::count();
+        $totalCategories  = Category::count();
+        $totalUsers       = User::where('is_admin', false)->count();
+        $totalOrders      = Order::count();
+        $totalRevenue     = Order::sum('total');
+        $lowStock         = Product::where('stock', '<=', 3)->count();
+        $lowStockProducts = Product::where('stock', '<=', 3)->orderBy('stock')->get();
+        $expiringSoon     = Product::whereNotNull('expiry_date')
+                                ->whereDate('expiry_date', '<=', now()->addDays(7))
+                                ->whereDate('expiry_date', '>=', now())
+                                ->count();
+        $expired          = Product::whereNotNull('expiry_date')
+                                ->whereDate('expiry_date', '<', now())
+                                ->count();
+        $recentOrders     = Order::with('user')->latest()->take(5)->get();
+
+        $monthlySales = Order::whereYear('created_at', now()->year)
+                            ->get()
+                            ->groupBy(fn($o) => $o->created_at->month)
+                            ->map(fn($group, $month) => (object)[
+                                'month' => $month,
+                                'total' => $group->sum('total'),
+                            ]);
 
         return view('admin.dashboard', compact(
             'totalProducts', 'totalCategories', 'totalUsers',
-            'totalOrders', 'totalRevenue', 'lowStock',
+            'totalOrders', 'totalRevenue', 'lowStock', 'lowStockProducts',
             'expiringSoon', 'expired', 'recentOrders', 'monthlySales'
         ));
     }
 
     public function revenue()
-{
-    $orders = Order::with('user', 'items.product')->latest()->get();
-    $totalRevenue = Order::sum('total');
-    $totalOrders  = Order::count();
-    $monthlySales = Order::selectRaw('MONTH(created_at) as month, SUM(total) as total, COUNT(*) as count')
-                        ->whereYear('created_at', now()->year)
-                        ->groupBy('month')
-                        ->orderBy('month')
-                        ->get();
+    {
+        $orders       = Order::with('user', 'items.product')->latest()->get();
+        $totalRevenue = Order::sum('total');
+        $totalOrders  = Order::count();
 
-    return view('admin.revenue', compact('orders', 'totalRevenue', 'totalOrders', 'monthlySales'));
-}
+        $monthlySales = Order::whereYear('created_at', now()->year)
+                            ->get()
+                            ->groupBy(fn($o) => $o->created_at->month)
+                            ->map(fn($group, $month) => (object)[
+                                'month' => $month,
+                                'total' => $group->sum('total'),
+                                'count' => $group->count(),
+                            ]);
+
+        return view('admin.revenue', compact('orders', 'totalRevenue', 'totalOrders', 'monthlySales'));
+    }
 }

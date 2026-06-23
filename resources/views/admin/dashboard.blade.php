@@ -31,25 +31,91 @@
     </div>
 </div>
 
-{{-- Alerts --}}
-@if($expired > 0)
-<div class="alert-admin alert-admin-danger">
-    ⚠️ {{ $expired }} product(s) have <strong>expired</strong>!
-    <a href="{{ route('admin.inventory') }}" style="color:#991B1B; font-weight:800; margin-left:8px;">View Inventory →</a>
-</div>
-@endif
+{{-- Alert Popup Modal --}}
+@if($expired > 0 || $expiringSoon > 0 || $lowStock > 0)
+<div id="alert-overlay" style="position:fixed; inset:0; background:rgba(0,0,0,0.5);
+     z-index:1000; display:flex; align-items:center; justify-content:center;
+     backdrop-filter:blur(3px);">
+    <div style="background:white; border-radius:20px; padding:32px; width:100%;
+                max-width:460px; box-shadow:0 20px 60px rgba(0,0,0,0.2); position:relative;">
 
-@if($expiringSoon > 0)
-<div class="alert-admin alert-admin-warning">
-    🕐 {{ $expiringSoon }} product(s) are <strong>expiring within 7 days</strong>.
-    <a href="{{ route('admin.inventory') }}" style="color:#92400E; font-weight:800; margin-left:8px;">View Inventory →</a>
-</div>
-@endif
+        {{-- Header --}}
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:24px;">
+            <div style="background:#FEF3C7; width:48px; height:48px; border-radius:12px;
+                        display:flex; align-items:center; justify-content:center; font-size:24px; flex-shrink:0;">
+                ⚠️
+            </div>
+            <div>
+                <div style="font-size:18px; font-weight:800; color:#1a1a1a;">Action Required</div>
+                <div style="font-size:13px; color:#888; margin-top:2px;">Please review the following alerts</div>
+            </div>
+            <button onclick="closeAlertPopup()"
+                style="position:absolute; top:16px; right:16px; background:#f0f0f0;
+                       border:none; width:32px; height:32px; border-radius:50%;
+                       cursor:pointer; font-size:14px; display:flex;
+                       align-items:center; justify-content:center;">✕</button>
+        </div>
 
-@if($lowStock > 0)
-<div class="alert-admin alert-admin-warning">
-    📉 {{ $lowStock }} product(s) have <strong>low stock (≤ 3)</strong>.
-    <a href="{{ route('admin.inventory') }}" style="color:#92400E; font-weight:800; margin-left:8px;">View Inventory →</a>
+        {{-- Alert Items --}}
+        <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:24px;">
+
+            @if($expired > 0)
+            <div style="background:#FEF2F2; border:1.5px solid #FECACA; border-radius:12px; padding:14px 16px;
+                        display:flex; align-items:center; gap:12px;">
+                <span style="font-size:20px;">🚨</span>
+                <div>
+                    <div style="font-size:13px; font-weight:800; color:#991B1B;">{{ $expired }} product(s) EXPIRED</div>
+                    <div style="font-size:12px; color:#B91C1C; margin-top:2px;">Remove or replace these items immediately</div>
+                </div>
+            </div>
+            @endif
+
+            @if($expiringSoon > 0)
+            <div style="background:#FFFBEB; border:1.5px solid #FDE68A; border-radius:12px; padding:14px 16px;
+                        display:flex; align-items:center; gap:12px;">
+                <span style="font-size:20px;">🕐</span>
+                <div>
+                    <div style="font-size:13px; font-weight:800; color:#92400E;">{{ $expiringSoon }} product(s) expiring within 7 days</div>
+                    <div style="font-size:12px; color:#B45309; margin-top:2px;">Check inventory and plan promotions</div>
+                </div>
+            </div>
+            @endif
+
+            @if($lowStock > 0)
+            <div style="background:#FFFBEB; border:1.5px solid #FDE68A; border-radius:12px; padding:14px 16px;
+                        display:flex; align-items:center; gap:12px;">
+                <span style="font-size:20px;">📉</span>
+                <div>
+                    <div style="font-size:13px; font-weight:800; color:#92400E;">{{ $lowStock }} product(s) low stock (≤ 3)</div>
+                    <div style="font-size:12px; color:#B45309; margin-top:2px;">Restock soon to avoid running out</div>
+                </div>
+            </div>
+            @endif
+
+        </div>
+
+        {{-- Actions --}}
+        <div style="display:flex; gap:10px;">
+            <a href="{{ route('admin.inventory') }}"
+               style="flex:1; padding:12px; background:#C0392B; color:white;
+                      border-radius:10px; font-size:14px; font-weight:800;
+                      text-decoration:none; text-align:center;
+                      transition:background 0.2s;"
+               onmouseover="this.style.background='#a93226'"
+               onmouseout="this.style.background='#C0392B'">
+                🗄️ View Inventory
+            </a>
+            <button onclick="closeAlertPopup()"
+                style="padding:12px 20px; background:#f0f0f0; color:#333;
+                       border:none; border-radius:10px; font-size:14px;
+                       font-weight:700; cursor:pointer; transition:background 0.2s;"
+                onmouseover="this.style.background='#e0e0e0'"
+                onmouseout="this.style.background='#f0f0f0'">
+                Dismiss
+            </button>
+        </div>
+
+    </div>
 </div>
 @endif
 
@@ -65,7 +131,7 @@
         <div class="month-bar-wrapper">
             @foreach($months as $i => $month)
                 @php
-                    $sale = $monthlySales->firstWhere('month', $i + 1);
+                    $sale = $monthlySales->get($i + 1);
                     $height = $sale ? ($sale->total / $maxSale) * 100 : 0;
                 @endphp
                 <div style="flex:1; display:flex; flex-direction:column; align-items:center;">
@@ -121,3 +187,16 @@
 </div>
 
 @endsection
+
+@push('scripts')
+<script>
+function closeAlertPopup() {
+    const overlay = document.getElementById('alert-overlay');
+    if (overlay) {
+        overlay.style.opacity = '0';
+        overlay.style.transition = 'opacity 0.3s';
+        setTimeout(() => overlay.remove(), 300);
+    }
+}
+</script>
+@endpush

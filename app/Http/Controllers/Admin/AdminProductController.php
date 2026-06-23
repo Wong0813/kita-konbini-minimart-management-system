@@ -106,38 +106,20 @@ class AdminProductController extends Controller
             ->with('success', 'Product deleted successfully.');
     }
 
-    public function inventory()
-    {
-        $products     = Product::with('category', 'batches')->get();
-        $lowStock     = Product::where('stock', '<=', 3)->with('category')->get();
-        $expiringSoon = Product::whereNotNull('expiry_date')
-                        ->whereDate('expiry_date', '<=', now()->addDays(7))
-                        ->whereDate('expiry_date', '>=', now())
-                        ->with('category')->get();
-        $expired      = Product::whereNotNull('expiry_date')
-                        ->whereDate('expiry_date', '<', now())
-                        ->with('category')->get();
+public function inventory()
+{
+    $products     = Product::with('category')->get();
+    $lowStock     = Product::where('stock', '<=', 3)->with('category')->get();
+    $expiringSoon = Product::whereNotNull('expiry_date')
+                    ->whereDate('expiry_date', '<=', now()->addDays(7))
+                    ->whereDate('expiry_date', '>=', now())
+                    ->with('category')->get();
+    $expired      = Product::whereNotNull('expiry_date')
+                    ->whereDate('expiry_date', '<', now())
+                    ->with('category')->get();
 
-        // Batches expiring soon or expired (across all products)
-        $batchesExpired      = ProductBatch::with('product.category')
-                                ->whereNotNull('expiry_date')
-                                ->whereDate('expiry_date', '<', now())
-                                ->where('quantity', '>', 0)
-                                ->orderBy('expiry_date')
-                                ->get();
-        $batchesExpiringSoon = ProductBatch::with('product.category')
-                                ->whereNotNull('expiry_date')
-                                ->whereDate('expiry_date', '>=', now())
-                                ->whereDate('expiry_date', '<=', now()->addDays(7))
-                                ->where('quantity', '>', 0)
-                                ->orderBy('expiry_date')
-                                ->get();
-
-        return view('admin.products.inventory', compact(
-            'products', 'lowStock', 'expiringSoon', 'expired',
-            'batchesExpired', 'batchesExpiringSoon'
-        ));
-    }
+    return view('admin.products.inventory', compact('products', 'lowStock', 'expiringSoon', 'expired'));
+}
 
     public function adjustStock(Request $request, Product $product)
     {
@@ -197,4 +179,40 @@ class AdminProductController extends Controller
 
         return response()->json(['success' => true]);
     }
+public function restock(Request $request, Product $product)
+{
+    $request->validate([
+        'cartons'          => 'required|integer|min:1',
+        'units_per_carton' => 'required|integer|min:1',
+    ]);
+
+    $units = $request->cartons * $request->units_per_carton;
+
+    $updateData = [
+        'units_per_carton' => $request->units_per_carton,
+        'stock'            => $product->stock + $units,
+    ];
+
+    // Update expiry date if provided
+    if ($request->filled('expiry_date')) {
+        $updateData['expiry_date'] = $request->expiry_date;
+    }
+
+    $product->update($updateData);
+
+    // Send notification
+    \App\Models\Notification::create([
+        'user_id' => null,
+        'type'    => 'stock',
+        'title'   => 'Restock Done ✅',
+        'message' => $product->name . ' restocked with ' . $request->cartons . ' carton(s) × ' . $request->units_per_carton . ' units = +' . $units . ' units added.',
+        'icon'    => '📦',
+    ]);
+
+    return response()->json([
+        'success'   => true,
+        'new_stock' => $product->fresh()->stock,
+        'units'     => $units,
+    ]);
+}
 }

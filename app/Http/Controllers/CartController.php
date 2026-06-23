@@ -101,7 +101,7 @@ class CartController extends Controller
     }
 
     // Checkout
-    public function checkout(Request $request)
+   public function checkout(Request $request)
 {
     $cart = session('cart', []);
 
@@ -116,17 +116,28 @@ class CartController extends Controller
         $product = \App\Models\Product::find($id);
         if ($product) {
             $subtotal = $product->price * $qty;
-            $total += $subtotal;
-            $items[] = [
+            $total   += $subtotal;
+            $items[]  = [
                 'product_id' => $product->id,
                 'quantity'   => $qty,
                 'price'      => $product->price,
             ];
             $product->decrement('stock', $qty);
+
+            // Notify admin if stock low
+            if ($product->stock <= 3) {
+                \App\Models\Notification::create([
+                    'user_id' => null,
+                    'type'    => 'stock',
+                    'title'   => 'Low Stock Alert',
+                    'message' => $product->name . ' only has ' . $product->stock . ' units left!',
+                    'icon'    => '⚠️',
+                ]);
+            }
         }
     }
 
-    // Save order to database
+    // Save order
     $order = \App\Models\Order::create([
         'user_id' => auth()->id(),
         'total'   => $total,
@@ -137,9 +148,19 @@ class CartController extends Controller
         $order->items()->create($item);
     }
 
+    // Notify user
+    \App\Models\Notification::create([
+        'user_id' => auth()->id(),
+        'type'    => 'order',
+        'title'   => 'Order Successful! 🎉',
+        'message' => 'Your order of RM ' . number_format($total, 2) . ' has been placed successfully.',
+        'icon'    => '✅',
+    ]);
+
     session()->forget('cart');
 
     return redirect()->route('home')
         ->with('success', 'Pesanan berjaya! Terima kasih kerana membeli-belah di Kita Konbini. 🎉');
-   }
+}
+
 }
